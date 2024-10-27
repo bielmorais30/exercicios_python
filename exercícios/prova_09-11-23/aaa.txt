@@ -1,0 +1,17 @@
+
+if jogo1_acertos > jogo2_acertos > jogo3_acertos :
+        lista_acertos[1]
+    if jogo2_acertos > jogo1_acertos > jogo3_acertos:
+        lista_acertos[2]
+    if jogo3_acertos > jogo2_acertos > jogo3_acertos:    
+        lista_acertos[3]
+
+
+        if lista_acertos[0] == lista_acertos[1] and lista_acertos[2]:
+        maiores[1,2,3]
+    elif lista_acertos == lista_acertos[1]:
+         if lista_acertos[0] == jogo1_acertos:
+
+
+         elif jogo2_acertos == jogo1_acertos and jogo2_acertos != jogo3_acertos:
+        lista_acertos=[2,1]
