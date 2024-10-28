@@ -1,9 +1,9 @@
 ## Atributos do NoArvoreCliente: ##
-# - Código                          
-# - Nome                          
-# - Saldo           
-# - esq
-# - dir 
+# - Código              OK            
+# - Nome                OK          
+# - Saldo               OK
+# - esq                 OK
+# - dir                 OK
                 
 class NoArvoreCliente:
     
@@ -16,12 +16,12 @@ class NoArvoreCliente:
 
 ## NoArvoreProduto ##
 ## Atributos:
-# - Código 
-# - Nome 
-# - PrecoUnitário 
-# - QuantidadeEmEstoque
-# - esq
-# - dir
+# - Código              OK
+# - Nome                OK
+# - PrecoUnitário       OK
+# - QuantidadeEmEstoque OK
+# - esq                 OK
+# - dir                 OK
 
 class NoArvoreProduto:
     def __init__(self, codigo,nome,precoUnitario,quantidadeEmEstoque):
@@ -34,12 +34,13 @@ class NoArvoreProduto:
 
 ## NoArvorePedido ##
 ## Atributos:
-# - códigoPedido
-# - dataPedido
-# - códigoDoCliente
-# - situacaoPedido
-# - esq
-# - dir 
+# - códigoPedido        OK
+# - dataPedido          OK
+# - códigoDoCliente     OK
+# - situacaoPedido      OK
+# - itemPedido                                      --Alterar--
+# - esq                 OK
+# - dir                 OK
 # ‘A’ – Aberto, ‘F’ – Fechado e ‘C’ – Cancelado.
 
 
@@ -209,7 +210,8 @@ class ArvoreCliente:
 # - Raiz                  
 # Metodos:                      
 # - incluirProduto        OK                  
-# - excluirProduto        OK               
+# - excluirProduto -                                 --Alterar--
+#           Só pode ser excluido caso não tenha nenhum itemDePedido associado ao produto
 # - alterarProduto        OK     
 # - buscarProduto         OK
 # - mostrarProduto        OK
@@ -351,12 +353,32 @@ class ArvoreProduto:
 # - Raiz                  
 # Metodos:                      
 # - incluirPedido                OK
-# - excluirPedido                OK    
-# - alterarPedido                OK   
-# - fecharPedido                 OK
-# - cancelarPedido               OK
+# - excluirPedido                               --Alterar--
+#           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
+# - alterarPedido                               --Alterar--  
+#           Se pedido fechado ou cancelado, arvore de item de pedido não poderá passar por manutenção.
+# - fecharPedido                                --Alterar--
+#           Um pedido só pode ser fechado se o mesmo possuir pelo menos um item de pedido associado
+#           mostrar todos itens de pedido com o total de cada item e também apresentar o total geral de todos os itens.
+# - cancelarPedido                              --Alterar--
+#           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
+
+# Criar metodos na ArvorePedidos para chamar os seguintes metodos da classse ArvoreItemDePedido
+#  Assim, para incluir um item de pedido, deve-se informar para qual pedido o item vai ser incluído
+
+#  incluir item de pedido (self, codigoPedido)
+#  excluir item de pedido
+#  alterar item de pedido
+#  buscar item de pedido
+#  mostrar item de pedido.
+
+
 # - buscarPedido                 OK
 # - mostrarPedido                OK
+# - mostrarDetalhesPedido                           NOVO
+# - mostrarPedidosEmAberto                           NOVO 
+#               Para cada pedido selecionado, mostrar os detalhes do pedido.
+
 # ‘A’ – Aberto, ‘F’ – Fechado e ‘C’ – Cancelado.
 # Um pedido só pode ser excluído se estiver com a situação do pedido igual a ‘F’ ou igual a ‘C’.
 # Um pedido só pode ser alterado se estiver com a situação do pedido igual a ‘A’.
@@ -572,6 +594,30 @@ class ArvorePedido:
             p = None
         print("\nRemovido com sucesso!")
 
+class NoArvoreItemPedido:
+    def __init__(self, codigoProduto, quantidade, preco):
+        self.codigoProduto = codigoProduto
+        self.quantidade = quantidade
+        self.preco = preco
+        self.esq = None
+        self.dir = None
+
+
+
+class ArvoreItemPedido:
+#  incluir item de pedido - 
+#           O produto do item deve ter sido cadastrado préviamente na arvore de produtos
+#           Checar a quantidade do item do pedido. naoCadastrado if quantidadeItemProduto > quantidadeNoEstoque 
+#           Se itemPedido incluido com sucesso então atualizar estoque do produto estoque = estoque - quantidade 
+
+#  excluir item de pedido - 
+#           Quando excluido, a quantidade do produto deve retornar ao estoque do produto            
+#  alterar item de pedido - 
+#           Quando a quantidade for alterada, atualizar o estoque do produto tanto pra mais ou para menos
+#  buscar item de pedido
+#  mostrar item de pedido.
+    def __init__(self):
+        self.raiz = None
 
 
 arvoreDeCLientes = ArvoreCliente()
