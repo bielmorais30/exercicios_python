@@ -378,6 +378,11 @@ class ArvoreProduto:
 # - mostrarDetalhesPedido                           NOVO
 # - mostrarPedidosEmAberto                           NOVO 
 #               Para cada pedido selecionado, mostrar os detalhes do pedido.
+# - mostrarPedidosPorProduto                           NOVO 
+#               Mostrar em quais pedidos está associado um determinado produto.
+# - totalizarTudo                           NOVO 
+#               Totalizar separadamente a quantidade de pedidos abertos, a quantidade de pedidos fechados e a quantidade de pedidos cancelados.
+
 
 # ‘A’ – Aberto, ‘F’ – Fechado e ‘C’ – Cancelado.
 # Um pedido só pode ser excluído se estiver com a situação do pedido igual a ‘F’ ou igual a ‘C’.
