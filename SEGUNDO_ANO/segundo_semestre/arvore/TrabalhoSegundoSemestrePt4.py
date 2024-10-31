@@ -610,7 +610,7 @@ class NoArvoreItemPedido:
 
 
 class ArvoreItemPedido:
-#  incluir item de pedido - 
+#  incluir item de pedido - OK
 #           O produto do item deve ter sido cadastrado préviamente na arvore de produtos
 #           Checar a quantidade do item do pedido. naoCadastrado if quantidadeItemProduto > quantidadeNoEstoque 
 #           Se itemPedido incluido com sucesso então atualizar estoque do produto estoque = estoque - quantidade 
@@ -624,13 +624,59 @@ class ArvoreItemPedido:
     def __init__(self):
         self.raiz = None
 
+    def incluirItemDePedido(self, codigoProduto, quantidade, preco, arvoreProduto):
+        print('+' + '-' * (15) + '+')
+        itemDePedido = NoArvoreItemPedido(codigoProduto, quantidade, preco)
 
-arvoreDeCLientes = ArvoreCliente()
+        produto = arvoreProduto.buscarProduto(codigoProduto)
 
-arvoreDeCLientes.incluirCliente(5, "Joao", 500)
 
-arvoreDeCLientes.incluirCliente(2, "Gabriel", 1000)
-arvoreDeCLientes.incluirCliente(3, "Bryan", 0)
+        if not produto:
+            print("Codigo de Produto Inválido!")
+            return 
+        
+        if produto.quantidadeEmEstoque < quantidade:
+            print("Quantidade excede o estoque do produto!")
+            return
+            
+        
+
+        if not self.raiz:
+            self.raiz = itemDePedido
+            print("Item de pedido incluido com sucesso")
+            produto.quantidadeEmEstoque = produto.quantidadeEmEstoque - quantidade
+            return
+        
+        p = self.raiz
+        q = None
+
+        while p and p.codigoProduto != itemDePedido.codigoProduto:
+            q = p
+            if itemDePedido.codigoProduto < p.codigoProduto:
+                p = p.esq
+            else:
+                p = p.dir
+        
+        if p: 
+            print('+' + '-' * (15) + '+')
+            print("Código do Item De Pedido já cadastrado!")
+            return
+
+        if q.codigoProduto > itemDePedido.codigoProduto:
+            q.esq = itemDePedido
+        else: 
+            q.dir = itemDePedido
+
+        produto.quantidadeEmEstoque = produto.quantidadeEmEstoque - quantidade
+        print("Item de Pedido cadastrado com sucesso!")
+        
+
+# arvoreDeCLientes = ArvoreCliente()
+
+# arvoreDeCLientes.incluirCliente(5, "Joao", 500)
+
+# arvoreDeCLientes.incluirCliente(2, "Gabriel", 1000)
+# arvoreDeCLientes.incluirCliente(3, "Bryan", 0)
 
 
 # arvoreDeCLientes.mostrarCliente(arvoreDeCLientes.buscarCliente(2))
@@ -642,33 +688,39 @@ arvoreDeCLientes.incluirCliente(3, "Bryan", 0)
 # arvoreDeCLientes.mostrarCliente(arvoreDeCLientes.buscarCliente(2))
 # arvoreDeCLientes.mostrarCliente(arvoreDeCLientes.buscarCliente(1))
 
-# produtos = ArvoreProduto()
+produtos = ArvoreProduto()
 
-# produtos.incluirProduto(1, "Produto1", 10, 2)
-# produtos.incluirProduto(2, "Produto2", 20, 4)
-# produtos.incluirProduto(3, "Produto3", 30, 7)
+produtos.incluirProduto(1, "Produto1", 10, 2)
+produtos.incluirProduto(2, "Produto2", 20, 4)
+produtos.incluirProduto(3, "Produto3", 30, 7)
 
-# produtos.mostrarProduto(produtos.buscarProduto(2))
+produtos.mostrarProduto(produtos.buscarProduto(3))
 
 # produtos.alterarProduto(2)
 # produtos.excluirProduto(2)
 
 # produtos.mostrarProduto(produtos.buscarProduto(2))
 
-pedidos = ArvorePedido()
+# pedidos = ArvorePedido()
 
-pedidos.incluirPedido(3, "25/10/2024", 5, arvoreDeCLientes)
-pedidos.incluirPedido(2, "25/10/2024", 2, arvoreDeCLientes)
-pedidos.incluirPedido(4, "25/10/2024", 2, arvoreDeCLientes)
-pedidos.incluirPedido(5, "25/10/2024", 2, arvoreDeCLientes)
+# pedidos.incluirPedido(3, "25/10/2024", 5, arvoreDeCLientes)
+# pedidos.incluirPedido(2, "25/10/2024", 2, arvoreDeCLientes)
+# pedidos.incluirPedido(4, "25/10/2024", 2, arvoreDeCLientes)
+# pedidos.incluirPedido(5, "25/10/2024", 2, arvoreDeCLientes)
 
-pedidos.mostrarPedido(pedidos.buscarPedido(2))
-pedidos.alterarPedido(2, arvoreDeCLientes)
-pedidos.cancelarPedido(3)
-pedidos.alterarPedido(3, arvoreDeCLientes)
-pedidos.mostrarPedido(pedidos.buscarPedido(2), arvoreDeCLientes)
-input()
-print(pedidos.buscarClienteAssociado(2))
-arvoreDeCLientes.excluirCliente(2, pedidos)
-pedidos.alterarPedido(2, arvoreDeCLientes)
-pedidos.excluirPedido(2)
+# pedidos.mostrarPedido(pedidos.buscarPedido(2))
+# pedidos.alterarPedido(2, arvoreDeCLientes)
+# pedidos.cancelarPedido(3)
+# pedidos.alterarPedido(3, arvoreDeCLientes)
+# pedidos.mostrarPedido(pedidos.buscarPedido(2), arvoreDeCLientes)
+# input()
+# print(pedidos.buscarClienteAssociado(2))
+# arvoreDeCLientes.excluirCliente(2, pedidos)
+# pedidos.alterarPedido(2, arvoreDeCLientes)
+# pedidos.excluirPedido(2)
+
+ItemsDePedidos = ArvoreItemPedido()
+
+ItemsDePedidos.incluirItemDePedido(3, 7, 10, produtos)
+
+produtos.mostrarProduto(produtos.buscarProduto(3))
