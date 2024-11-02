@@ -615,7 +615,7 @@ class ArvoreItemPedido:
 #           Checar a quantidade do item do pedido. naoCadastrado if quantidadeItemProduto > quantidadeNoEstoque 
 #           Se itemPedido incluido com sucesso então atualizar estoque do produto estoque = estoque - quantidade 
 
-#  excluir item de pedido - 
+#  excluir item de pedido - OK
 #           Quando excluido, a quantidade do produto deve retornar ao estoque do produto            
 #  alterar item de pedido - 
 #           Quando a quantidade for alterada, atualizar o estoque do produto tanto pra mais ou para menos
@@ -669,6 +669,61 @@ class ArvoreItemPedido:
 
         produto.quantidadeEmEstoque = produto.quantidadeEmEstoque - quantidade
         print("Item de Pedido cadastrado com sucesso!")
+
+    
+
+    def excluirItemDePedido(self, codigoProduto, arvoreProduto):
+        print('+' + '-' * (15) + '+')
+        produto = arvoreProduto.buscarProduto(codigoProduto)
+        p = self.raiz
+        q = None
+
+        while p and p.codigoProduto != codigoProduto:
+            q = p
+            if codigoProduto < p.codigoProduto:
+                p = p.esq
+            else:
+                p = p.dir
+
+        if not p:
+            print("\nItem de pedido não encontrado!")
+            return
+        
+        if not p.dir:
+            v = p.esq
+        elif not p.esq:
+            v = p.dir
+        else:
+
+            t = p # nó pai de v
+            v = p.dir   # no que vai entrar no lugar de p
+            s = v.esq # sucessor de v
+
+
+            while s:
+                t = v
+                v = s
+                s = v.esq
+
+            if t != p:
+                t.esq = v.dir
+                v.dir = p.dir
+
+            v.esq = p.esq
+
+        if not q:
+            self.raiz = v
+        else:
+            if p == q.esq:
+                q.esq = v
+            else: 
+                q.dir = v
+
+        produto.quantidadeEmEstoque = produto.quantidadeEmEstoque + p.quantidade
+        p = None
+        
+        
+        print("\nRemovido com sucesso!")
         
 
 # arvoreDeCLientes = ArvoreCliente()
@@ -723,4 +778,7 @@ ItemsDePedidos = ArvoreItemPedido()
 
 ItemsDePedidos.incluirItemDePedido(3, 7, 10, produtos)
 
+produtos.mostrarProduto(produtos.buscarProduto(3))
+
+ItemsDePedidos.excluirItemDePedido(3, produtos)
 produtos.mostrarProduto(produtos.buscarProduto(3))
