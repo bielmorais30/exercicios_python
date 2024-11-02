@@ -277,7 +277,7 @@ class ArvoreProduto:
     def mostrarProduto(self, produto):
         print('+' + '-' * (15) + '+')
         if produto:
-            print(f'\nProduto:\n Código: {produto.codigo}\n Nome: {produto.nome}\n Preço: {produto.precoUnitario}\n Quantidade: {produto.quantidadeEmEstoque}')
+            print(f'\nProduto:\n Código: {produto.codigo}\n Nome: {produto.nome}\n Preço: {produto.precoUnitario}\n Quantidade Em Estoque: {produto.quantidadeEmEstoque}')
             return
         
         print("\nProduto inválido!")
@@ -616,9 +616,11 @@ class ArvoreItemPedido:
 #           Se itemPedido incluido com sucesso então atualizar estoque do produto estoque = estoque - quantidade 
 
 #  excluir item de pedido - OK
-#           Quando excluido, a quantidade do produto deve retornar ao estoque do produto            
+#           Quando excluido, a quantidade do produto deve retornar ao estoque do produto     
+#        
 #  alterar item de pedido - 
 #           Quando a quantidade for alterada, atualizar o estoque do produto tanto pra mais ou para menos
+
 #  buscar item de pedido
 #  mostrar item de pedido.
     def __init__(self):
@@ -724,7 +726,62 @@ class ArvoreItemPedido:
         
         
         print("\nRemovido com sucesso!")
+
+    
+    def buscarItemDePedido(self, codigoProduto):
+        if not self.raiz:
+            print("\nArvore Item Pedido está vazia!")
+            return
+
+        p = self.raiz
+
+        while p and p.codigoProduto != codigoProduto:
+            if codigoProduto < p.codigoProduto:
+                p = p.esq
+            else:
+                p = p.dir
         
+        if not p:
+            print('+' + '-' * (15) + '+')
+            print("Item de pedido não encontrado!")
+            return
+    
+        return p    
+
+    def mostrarItemDePedido(self, itemDePedido):
+        print('+' + '-' * (15) + '+')
+        if itemDePedido:
+            print(f'\nItem De Pedido:\n Código Produto: {itemDePedido.codigoProduto}\n Quantidade: {itemDePedido.quantidade}\n Preço: {itemDePedido.preco}')
+            return
+        
+        print("\nItem De Pedido inválido!")
+
+
+    def alterarItemDePedido(self, codProduto, arvoreProduto):
+        print('+' + '-' * (15) + '+')
+        produto = arvoreProduto.buscarProduto(codProduto)
+        itemPedido = self.buscarItemDePedido(codProduto)
+        if itemPedido:
+            print(f"\nCodigo do Produto: {itemPedido.codigoProduto}")
+            
+            produto.quantidadeEmEstoque += itemPedido.quantidade
+            while True:
+                print(f"\nEstoque: {produto.quantidadeEmEstoque}")
+                
+                auxQnt = int(input("Alterar: "))
+                if auxQnt > produto.quantidadeEmEstoque:
+                    print("\nQuantidade ultrapassa o estoque do item!")
+                    continue
+                else:
+                    itemPedido.quantidade = auxQnt
+                    produto.quantidadeEmEstoque = produto.quantidadeEmEstoque - itemPedido.quantidade
+                    break
+            print(f"\nPreço: {itemPedido.preco}")
+            itemPedido.preco = int(input("Alterar: "))
+
+            print("\n## Informações do Item de Pedido atualizadas! ## ")
+
+            return self.mostrarItemDePedido(itemPedido)
 
 # arvoreDeCLientes = ArvoreCliente()
 
@@ -781,4 +838,9 @@ ItemsDePedidos.incluirItemDePedido(3, 7, 10, produtos)
 produtos.mostrarProduto(produtos.buscarProduto(3))
 
 ItemsDePedidos.excluirItemDePedido(3, produtos)
-produtos.mostrarProduto(produtos.buscarProduto(3))
+produtos.mostrarProduto(produtos.buscarProduto(2))
+ItemsDePedidos.incluirItemDePedido(2, 3, 10, produtos)
+ItemsDePedidos.mostrarItemDePedido(ItemsDePedidos.buscarItemDePedido(2))
+ItemsDePedidos.alterarItemDePedido(2, produtos)
+
+produtos.mostrarProduto(produtos.buscarProduto(2))
