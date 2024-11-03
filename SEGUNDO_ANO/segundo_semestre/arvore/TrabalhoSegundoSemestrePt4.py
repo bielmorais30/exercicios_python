@@ -358,7 +358,7 @@ class ArvoreProduto:
 #           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
 # - alterarPedido                                   OK  
 #           Se pedido fechado ou cancelado, arvore de item de pedido não poderá passar por manutenção.
-# - fecharPedido                                --Alterar--
+# - fecharPedido                                    OK  
 #           Um pedido só pode ser fechado se o mesmo possuir pelo menos um item de pedido associado
 #           mostrar todos itens de pedido com o total de cada item e também apresentar o total geral de todos os itens.
 # - cancelarPedido                                  OK
@@ -376,12 +376,12 @@ class ArvoreProduto:
 
 # - buscarPedido                 OK
 # - mostrarPedido                OK
-# - mostrarDetalhesPedido                           NOVO
-# - mostrarPedidosEmAberto                           NOVO 
+# - mostrarDetalhesPedido                           OK..
+# - mostrarPedidosEmAberto                           OK 
 #               Para cada pedido selecionado, mostrar os detalhes do pedido.
 # - mostrarPedidosPorProduto                           NOVO 
 #               Mostrar em quais pedidos está associado um determinado produto.
-# - totalizarTudo                           NOVO 
+# - totalizarTudo                           OK
 #               Totalizar separadamente a quantidade de pedidos abertos, a quantidade de pedidos fechados e a quantidade de pedidos cancelados.
 
 
@@ -651,6 +651,51 @@ class ArvorePedido:
             p.itensDePedido.excluirTodositensDePedido(p.itensDePedido.raiz, arvoreProduto)
             p = None
         print("\nRemovido com sucesso!")
+
+
+    def mostrarPedidosEmAberto(self, raiz):
+        if raiz:
+            if raiz.esq:
+                self.mostrarItemDePedido(raiz.esq)
+            if raiz.situacaoPedido == "A":
+                self.mostrarPedido(raiz)
+            if raiz.dir:
+                self.mostrarItemDePedido(raiz.esq)
+        return
+    
+    def totalPedidosEmAberto(self, raiz):  # não precisava dessa, criei errado
+        total = 0
+        if raiz:
+            if raiz.esq:               
+                total += self.totalPedidosEmAberto(raiz.esq)
+            if raiz.dir:               
+                total += self.totalPedidosEmAberto(raiz.dir)
+            if raiz.situacaoPedido == "A":
+                total += raiz.itensDePedido.totalDeTodosItensDePedido(raiz.itensDePedido.raiz)
+        return total
+    
+    
+    def statusGeral(self, raiz):
+        abertos = 0
+        fechados = 0
+        cancelados = 0
+        if raiz:
+            if raiz.esq:               
+                abertos_esq, fechados_esq, cancelados_esq = self.statusGeral(raiz.esq)
+            if raiz.dir:               
+                abertos_esq, fechados_esq, cancelados_esq = self.statusGeral(raiz.dir)
+            if raiz.situacaoPedido == "A":
+                abertos += 1
+            if raiz.situacaoPedido == "F":
+                fechados += 1
+            if raiz.situacaoPedido == "C":
+                cancelados += 1
+        return abertos, fechados, cancelados
+    
+    def mostrarStatusGeral(self):
+        abertos, fechados, cancelados = self.statusGeral(self.raiz)
+        print(f"\nStatus dos Pedidos:\nAbertos: {abertos}\nFechados: {fechados}\nCancelados: {cancelados}\n")
+
 
 class NoArvoreItemPedido:
     def __init__(self, codigoProduto, quantidade, preco):
@@ -927,5 +972,8 @@ pedidos.alterarItemDePedido(3, 2, produtos)
 produtos.mostrarProduto(produtos.buscarProduto(2))
 # pedidos.raiz.itensDePedido.mostrarTodosItensDePedido(pedidos.raiz.itensDePedido.raiz)
 # print(pedidos.raiz.itensDePedido.totalDeTodosItensDePedido(pedidos.raiz.itensDePedido.raiz))
-pedidos.fecharPedido(3)
-
+print("Pedidos em aberto: ")
+pedidos.mostrarPedidosEmAberto(pedidos.raiz)
+# pedidos.fecharPedido(3)
+# print(f"Total pedidos em aberto: {pedidos.totalPedidosEmAberto(pedidos.raiz)}")
+pedidos.mostrarStatusGeral()
