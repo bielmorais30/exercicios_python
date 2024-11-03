@@ -38,7 +38,7 @@ class NoArvoreProduto:
 # - dataPedido          OK
 # - códigoDoCliente     OK
 # - situacaoPedido      OK
-# - itemPedido                                      --Alterar--
+# - itemPedido                                      OK
 # - esq                 OK
 # - dir                 OK
 # ‘A’ – Aberto, ‘F’ – Fechado e ‘C’ – Cancelado.
@@ -50,6 +50,7 @@ class NoArvorePedido:
         self.dataPedido = dataPedido
         self.codigoDoCliente = codigoDoCliente
         self.situacaoPedido = "A"
+        self.itensDePedido = ArvoreItemPedido()
         self.esq = None
         self.dir = None
 
@@ -353,7 +354,7 @@ class ArvoreProduto:
 # - Raiz                  
 # Metodos:                      
 # - incluirPedido                OK
-# - excluirPedido                               --Alterar--
+# - excluirPedido                               --TESTAR--
 #           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
 # - alterarPedido                               --Alterar--  
 #           Se pedido fechado ou cancelado, arvore de item de pedido não poderá passar por manutenção.
@@ -366,11 +367,11 @@ class ArvoreProduto:
 # Criar metodos na ArvorePedidos para chamar os seguintes metodos da classse ArvoreItemDePedido
 #  Assim, para incluir um item de pedido, deve-se informar para qual pedido o item vai ser incluído
 
-#  incluir item de pedido (self, codigoPedido)
-#  excluir item de pedido
-#  alterar item de pedido
-#  buscar item de pedido
-#  mostrar item de pedido.
+#  incluir item de pedido (self, codigoPedido)    TESTAR
+#  excluir item de pedido           TESTAR
+#  alterar item de pedido           TESTAR            
+#  buscar item de pedido            TESTAR
+#  mostrar item de pedido.          TESTAR  
 
 
 # - buscarPedido                 OK
@@ -391,6 +392,32 @@ class ArvoreProduto:
 class ArvorePedido:
     def __init__(self):
         self.raiz = None
+
+    def incluirItemDePedido(self, codigoDoPedido, codigoProduto, quantidade, preco, arvoreProduto):
+        pedido = self.buscarPedido(codigoDoPedido)
+        pedido.itensDePedido.incluirItemDePedido(codigoProduto, quantidade, preco, arvoreProduto)
+
+    def excluirItemDePedido(self, codigoDoPedido, codigoProduto, arvoreProduto):
+        pedido = self.buscarPedido(codigoDoPedido)
+        if not pedido.itensDePedido.raiz:
+            print("Arvore Item De Pedidos está vazia!")
+
+        pedido.itensDePedido.excluirItemDePedido(codigoProduto, arvoreProduto)
+
+
+    def alterarItemDePedido(self, codigoDoPedido, codProduto, arvoreProduto):
+        pedido = self.buscarPedido(codigoDoPedido)
+        pedido.itensDePedido.alterarItemDePedido(codProduto, arvoreProduto)
+
+    def buscarItemDePedido(self, codigoDoPedido, codigoProduto):
+        pedido = self.buscarPedido(codigoDoPedido)
+        pedido.itensDePedido.buscarItemDePedido(codigoProduto)
+
+    def mostrarItemDePedido(self, codigoDoPedido, itemDePedido):
+        pedido = self.buscarPedido(codigoDoPedido)
+        pedido.itensDePedido.mostrarItemDePedido(itemDePedido)
+
+                            ######
 
     def incluirPedido(self, codigoPedido, dataPedido, codigoDoCliente, arvoreClientes):
         print('+' + '-' * (15) + '+')
@@ -540,7 +567,7 @@ class ArvorePedido:
             else:
                 return (0 + self.buscarClienteAssociado(codCliente, raiz.esq))
     
-    def excluirPedido(self, codigoPedido):
+    def excluirPedido(self, codigoPedido, arvoreProduto):
         print('+' + '-' * (15) + '+')
         
         p = self.raiz
@@ -595,7 +622,7 @@ class ArvorePedido:
             else:
                 q.dir = v
                     
-            
+            p.itensDePedido.excluirTodositensDePedido(p.itensDePedido.raiz, arvoreProduto)
             p = None
         print("\nRemovido com sucesso!")
 
@@ -618,11 +645,11 @@ class ArvoreItemPedido:
 #  excluir item de pedido - OK
 #           Quando excluido, a quantidade do produto deve retornar ao estoque do produto     
 #        
-#  alterar item de pedido - 
+#  alterar item de pedido - OK
 #           Quando a quantidade for alterada, atualizar o estoque do produto tanto pra mais ou para menos
 
-#  buscar item de pedido
-#  mostrar item de pedido.
+#  buscar item de pedido    OK
+#  mostrar item de pedido.  OK
     def __init__(self):
         self.raiz = None
 
@@ -783,9 +810,20 @@ class ArvoreItemPedido:
 
             return self.mostrarItemDePedido(itemPedido)
 
-# arvoreDeCLientes = ArvoreCliente()
+    def excluirTodosItensDePedido(self, raiz, arvoreProduto):
+        if not raiz:
+            return
+        
+        produto = arvoreProduto.buscarProduto(raiz.codProduto)
+        produto.estoque += raiz.quantidadeEmEstoque
 
-# arvoreDeCLientes.incluirCliente(5, "Joao", 500)
+        self.excluirItemDePedido(raiz.esq, arvoreProduto)
+        self.excluirItemDePedido(raiz.dir, arvoreProduto)
+        raiz = None
+
+arvoreDeCLientes = ArvoreCliente()
+
+arvoreDeCLientes.incluirCliente(5, "Joao", 500)
 
 # arvoreDeCLientes.incluirCliente(2, "Gabriel", 1000)
 # arvoreDeCLientes.incluirCliente(3, "Bryan", 0)
@@ -813,9 +851,9 @@ produtos.mostrarProduto(produtos.buscarProduto(3))
 
 # produtos.mostrarProduto(produtos.buscarProduto(2))
 
-# pedidos = ArvorePedido()
+pedidos = ArvorePedido()
 
-# pedidos.incluirPedido(3, "25/10/2024", 5, arvoreDeCLientes)
+pedidos.incluirPedido(3, "25/10/2024", 5, arvoreDeCLientes)
 # pedidos.incluirPedido(2, "25/10/2024", 2, arvoreDeCLientes)
 # pedidos.incluirPedido(4, "25/10/2024", 2, arvoreDeCLientes)
 # pedidos.incluirPedido(5, "25/10/2024", 2, arvoreDeCLientes)
@@ -831,16 +869,18 @@ produtos.mostrarProduto(produtos.buscarProduto(3))
 # pedidos.alterarPedido(2, arvoreDeCLientes)
 # pedidos.excluirPedido(2)
 
-ItemsDePedidos = ArvoreItemPedido()
+# ItemsDePedidos = ArvoreItemPedido()
 
-ItemsDePedidos.incluirItemDePedido(3, 7, 10, produtos)
+pedidos.incluirItemDePedido(3, 1, 7, 10, produtos)
+pedidos.incluirItemDePedido(3, 2, 10, 11, produtos)
 
-produtos.mostrarProduto(produtos.buscarProduto(3))
+produtos.mostrarProduto(produtos.buscarProduto(1))
 
-ItemsDePedidos.excluirItemDePedido(3, produtos)
+pedidos.excluirItemDePedido(3, 1, produtos)
 produtos.mostrarProduto(produtos.buscarProduto(2))
-ItemsDePedidos.incluirItemDePedido(2, 3, 10, produtos)
-ItemsDePedidos.mostrarItemDePedido(ItemsDePedidos.buscarItemDePedido(2))
-ItemsDePedidos.alterarItemDePedido(2, produtos)
+pedidos.incluirItemDePedido(3, 2, 3, 10, produtos)
+pedidos.mostrarItemDePedido(3, pedidos.buscarItemDePedido(3, 2))
+pedidos.alterarItemDePedido(3, 2, produtos)
 
 produtos.mostrarProduto(produtos.buscarProduto(2))
+
