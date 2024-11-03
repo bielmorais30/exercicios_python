@@ -354,24 +354,24 @@ class ArvoreProduto:
 # - Raiz                  
 # Metodos:                      
 # - incluirPedido                OK
-# - excluirPedido                               --TESTAR--
+# - excluirPedido                                   OK
 #           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
-# - alterarPedido                               --Alterar--  
+# - alterarPedido                                   OK  
 #           Se pedido fechado ou cancelado, arvore de item de pedido não poderá passar por manutenção.
 # - fecharPedido                                --Alterar--
 #           Um pedido só pode ser fechado se o mesmo possuir pelo menos um item de pedido associado
 #           mostrar todos itens de pedido com o total de cada item e também apresentar o total geral de todos os itens.
-# - cancelarPedido                              --Alterar--
+# - cancelarPedido                                  OK
 #           se existir itens de pedido associado ao pedido, as quantidades, de cada produto deve voltar para o estoque
 
 # Criar metodos na ArvorePedidos para chamar os seguintes metodos da classse ArvoreItemDePedido
 #  Assim, para incluir um item de pedido, deve-se informar para qual pedido o item vai ser incluído
 
-#  incluir item de pedido (self, codigoPedido)    TESTAR
-#  excluir item de pedido           TESTAR
-#  alterar item de pedido           TESTAR            
-#  buscar item de pedido            TESTAR
-#  mostrar item de pedido.          TESTAR  
+#  incluir item de pedido (self, codigoPedido)    OK
+#  excluir item de pedido           OK
+#  alterar item de pedido           OK            
+#  buscar item de pedido            OK
+#  mostrar item de pedido.          OK  
 
 
 # - buscarPedido                 OK
@@ -395,10 +395,18 @@ class ArvorePedido:
 
     def incluirItemDePedido(self, codigoDoPedido, codigoProduto, quantidade, preco, arvoreProduto):
         pedido = self.buscarPedido(codigoDoPedido)
+        if pedido.situacaoPedido == "F"  or pedido.situacaoPedido == "C":
+            print('+' + '-' * (15) + '+')
+            print("Erro, pedido fechado ou cancelado!")
+            return
         pedido.itensDePedido.incluirItemDePedido(codigoProduto, quantidade, preco, arvoreProduto)
 
     def excluirItemDePedido(self, codigoDoPedido, codigoProduto, arvoreProduto):
         pedido = self.buscarPedido(codigoDoPedido)
+        if pedido.situacaoPedido == "F"  or pedido.situacaoPedido == "C":
+            print('+' + '-' * (15) + '+')
+            print("Erro, pedido fechado ou cancelado!")
+            return
         if not pedido.itensDePedido.raiz:
             print("Arvore Item De Pedidos está vazia!")
 
@@ -407,14 +415,26 @@ class ArvorePedido:
 
     def alterarItemDePedido(self, codigoDoPedido, codProduto, arvoreProduto):
         pedido = self.buscarPedido(codigoDoPedido)
+        if pedido.situacaoPedido == "F"  or pedido.situacaoPedido == "C":
+            print('+' + '-' * (15) + '+')
+            print("Erro, pedido fechado ou cancelado!")
+            return
         pedido.itensDePedido.alterarItemDePedido(codProduto, arvoreProduto)
 
     def buscarItemDePedido(self, codigoDoPedido, codigoProduto):
         pedido = self.buscarPedido(codigoDoPedido)
+        if pedido.situacaoPedido == "F"  or pedido.situacaoPedido == "C":
+            print('+' + '-' * (15) + '+')
+            print("Erro, pedido fechado ou cancelado!")
+            return
         pedido.itensDePedido.buscarItemDePedido(codigoProduto)
 
     def mostrarItemDePedido(self, codigoDoPedido, itemDePedido):
         pedido = self.buscarPedido(codigoDoPedido)
+        if pedido.situacaoPedido == "F"  or pedido.situacaoPedido == "C":
+            print('+' + '-' * (15) + '+')
+            print("Erro, pedido fechado ou cancelado!")
+            return
         pedido.itensDePedido.mostrarItemDePedido(itemDePedido)
 
                             ######
@@ -525,18 +545,24 @@ class ArvorePedido:
     def fecharPedido(self, codPedido):
         pedido = self.buscarPedido(codPedido)
 
-        if pedido:
+        if pedido and pedido.itensDePedido.raiz:
             print('\n+' + '-' * (15) + '+')
             pedido.situacaoPedido = "F"    
-            print("Situação de pedido alterad com sucesso\n'F' - Fechado")      
+            print("Situação de pedido alterad com sucesso\n'F' - Fechado")  
+            pedido.itensDePedido.mostrarTodosItensDePedido(pedido.itensDePedido.raiz)
+            print(f"\n\nTotal dos itens: {pedido.itensDePedido.totalDeTodosItensDePedido(pedido.itensDePedido.raiz)}")    
             return
+        else:
+            print("Erro ao fechar pedido: nenhum item de pedido cadastrado!")
+
         
-    def cancelarPedido(self, codPedido):
+    def cancelarPedido(self, codPedido, arvoreProduto):
         pedido = self.buscarPedido(codPedido)
 
         if pedido:
             print('\n+' + '-' * (15) + '+')
             pedido.situacaoPedido = "C"    
+            pedido.itensDePedido.excluirTodosItensDePedido(pedido.itensDePedido, arvoreProduto)
             print("Situação de pedido alterad com sucesso\n'C' - Cancelado")      
             return
 
@@ -821,6 +847,20 @@ class ArvoreItemPedido:
         self.excluirItemDePedido(raiz.dir, arvoreProduto)
         raiz = None
 
+
+    def mostrarTodosItensDePedido(self,raiz):
+        # mostrar todos itens de pedido com o total de cada item e também apresentar o total geral de todos os itens.
+        if raiz:
+            self.mostrarItemDePedido(raiz)
+            print(f"Total: {raiz.quantidade * raiz.preco}")
+            if raiz:
+                self.mostrarTodosItensDePedido(raiz.esq)
+                self.mostrarTodosItensDePedido(raiz.dir)
+                
+    def totalDeTodosItensDePedido(self, raiz):
+        if raiz:
+            return raiz.quantidade * raiz.preco + self.totalDeTodosItensDePedido(raiz.esq) + self.totalDeTodosItensDePedido(raiz.dir)
+        return 0
 arvoreDeCLientes = ArvoreCliente()
 
 arvoreDeCLientes.incluirCliente(5, "Joao", 500)
@@ -876,11 +916,16 @@ pedidos.incluirItemDePedido(3, 2, 10, 11, produtos)
 
 produtos.mostrarProduto(produtos.buscarProduto(1))
 
-pedidos.excluirItemDePedido(3, 1, produtos)
+# pedidos.excluirItemDePedido(3, 1, produtos)
 produtos.mostrarProduto(produtos.buscarProduto(2))
 pedidos.incluirItemDePedido(3, 2, 3, 10, produtos)
+pedidos.incluirItemDePedido(3, 3, 1, 20, produtos)
 pedidos.mostrarItemDePedido(3, pedidos.buscarItemDePedido(3, 2))
+pedidos.alterarPedido(3, arvoreDeCLientes)
 pedidos.alterarItemDePedido(3, 2, produtos)
 
 produtos.mostrarProduto(produtos.buscarProduto(2))
+# pedidos.raiz.itensDePedido.mostrarTodosItensDePedido(pedidos.raiz.itensDePedido.raiz)
+# print(pedidos.raiz.itensDePedido.totalDeTodosItensDePedido(pedidos.raiz.itensDePedido.raiz))
+pedidos.fecharPedido(3)
 
