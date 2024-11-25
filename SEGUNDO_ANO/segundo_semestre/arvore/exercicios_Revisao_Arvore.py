@@ -102,6 +102,19 @@ class Arvore:
         if raiz.valor % 2 != 0:
             self.retirarNo(raiz.valor)
         
+    def menoresQue(self, raiz, n):
+
+        if not raiz:
+            return []
+        vetor = []
+        vetor += self.menoresQue(raiz.esq, n)
+        vetor += self.menoresQue(raiz.dir, n)
+
+        if raiz.valor < n:
+            vetor.append(raiz.valor) 
+        
+        return vetor
+
 class NoArvore:
     def __init__(self, valor):
         self.valor = valor
@@ -120,9 +133,11 @@ arvBin.adicionarNo(80)
 arvBin.adicionarNo(15)
 arvBin.adicionarNo(84)
 
-arvBin.retirarImpares(arvBin.raiz)
+# arvBin.retirarImpares(arvBin.raiz)
 
 arvBin.preOrdem(arvBin.raiz)
 # print("\n\n")
 # arvBin.retirarNo(45)
 # arvBin.preOrdem(arvBin.raiz)
+
+print(arvBin.menoresQue(arvBin.raiz, 80))
